@@ -12,33 +12,37 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Check for saved theme in localStorage
+    // Check if we're in the browser environment
     if (typeof window !== 'undefined') {
+      // Check for saved theme in localStorage
       const savedTheme = localStorage.getItem('theme') as Theme;
-      if (savedTheme) return savedTheme;
+      if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
       
-      // Check system preference
+      // Check system preference if no saved theme
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'light'; // Default if window is not defined (SSR)
   });
 
+  // Effect to apply theme class to document and save preference
   useEffect(() => {
-    // Apply theme class to the document
+    if (typeof window === 'undefined') return;
+    
     const root = document.documentElement;
     
+    // Apply theme class to document
     if (theme === 'dark') {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
     
-    // Save theme preference
+    // Save theme preference to localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   return (
