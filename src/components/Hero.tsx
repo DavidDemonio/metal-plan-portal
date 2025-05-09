@@ -19,7 +19,7 @@ const Hero = () => {
         
         <h1 className="text-4xl md:text-5xl font-extrabold mb-6 animate-fade-in">
           <span className="bg-gradient-to-r from-zenopurple to-zenoblue bg-clip-text text-transparent">
-            ZenoScale
+            MetalScale
           </span>{" "}
           <span className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
             de Alto Rendimiento
