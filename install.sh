@@ -57,37 +57,14 @@ npm install
 echo "Compilando aplicación frontend..."
 npm run build
 
-# Configurar servicios
-echo "Configurando servicio systemd..."
-cat > /etc/systemd/system/metalscale.service << EOF
-[Unit]
-Description=MetalScale Server
-After=network.target
+# Añadir script para iniciar backend y frontend a la vez
+echo "Añadiendo script de inicio al package.json..."
+npm pkg set scripts.start="node server.js"
+npm pkg set scripts.dev="concurrently \"vite --port 8080\" \"node server.js\""
 
-[Service]
-Type=simple
-User=$(whoami)
-WorkingDirectory=$(pwd)
-ExecStart=$(which node) server.js
-Restart=on-failure
-Environment=NODE_ENV=production
+# Añadir concurrently como dependencia de desarrollo
+npm install --save-dev concurrently
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Recargar systemd, habilitar y arrancar el servicio
-echo "Iniciando servicio..."
-systemctl daemon-reload
-systemctl enable metalscale
-systemctl start metalscale
-
-if [ $? -ne 0 ]; then
-    echo "Error: No se pudo iniciar el servicio."
-    exit 1
-fi
-
-# Mostrar información final
 echo ""
 echo "===================================="
 echo "  Instalación completada con éxito"
@@ -96,11 +73,14 @@ echo ""
 echo "La aplicación está funcionando en:"
 echo "http://localhost:3000"
 echo ""
+echo "Para iniciar la aplicación en modo desarrollo (backend y frontend):"
+echo "npm run dev"
+echo ""
+echo "Para iniciar solo el servidor en producción:"
+echo "npm start"
+echo ""
 echo "Para acceder por primera vez, visite:"
 echo "http://localhost:3000/login"
 echo ""
 echo "Se le pedirá crear una cuenta de administrador."
-echo ""
-echo "Para verificar el estado del servicio:"
-echo "systemctl status metalscale"
 echo ""

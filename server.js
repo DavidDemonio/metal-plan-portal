@@ -97,6 +97,21 @@ app.get('/api/auth/check-setup', async (req, res) => {
   }
 });
 
+// Nueva ruta para verificar la conexión a la base de datos
+app.get('/api/auth/check-db-connection', async (req, res) => {
+  try {
+    // Intenta hacer una consulta simple para verificar la conexión
+    await db.execute('SELECT 1');
+    res.json({ connected: true });
+  } catch (error) {
+    console.error('Error al verificar conexión a la base de datos:', error);
+    res.json({ 
+      connected: false, 
+      error: `Error de conexión: ${error.message}`
+    });
+  }
+});
+
 app.post('/api/auth/setup', async (req, res) => {
   const { username, password } = req.body;
   

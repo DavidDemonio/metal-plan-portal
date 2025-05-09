@@ -1,13 +1,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useTheme } from "@/context/ThemeContext";
 
 const Hero = () => {
-  const { theme } = useTheme();
-  
   return (
-    <div className={`${theme === 'dark' ? 'bg-gradient-to-br from-zinc-900 to-zinc-950' : 'bg-gradient-to-br from-zinc-50 to-zinc-100'} py-16 md:py-20 px-4 rounded-3xl mx-4 mt-6 transition-colors duration-300`}>
+    <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 py-16 md:py-20 px-4 rounded-3xl mx-4 mt-6">
       <div className="container mx-auto text-center">
         <div className="flex justify-center mb-8">
           <img
@@ -21,12 +18,12 @@ const Hero = () => {
           <span className="bg-gradient-to-r from-zenopurple to-zenoblue bg-clip-text text-transparent">
             MetalScale
           </span>{" "}
-          <span className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
+          <span className="text-gray-800">
             de Alto Rendimiento
           </span>
         </h1>
         
-        <p className={`text-lg md:text-xl ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mb-8 max-w-3xl mx-auto animate-fade-in`}>
+        <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto animate-fade-in">
           Servidores bare metal especializados con tecnología propia de automatización,
           escalabilidad total y atención humana con mentalidad técnica.
         </p>

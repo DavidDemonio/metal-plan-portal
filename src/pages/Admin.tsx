@@ -11,6 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Database, Check, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PlanCard from "@/components/PlanCard";
@@ -20,6 +22,7 @@ import { useAuth } from "@/context/AuthContext";
 import { usePlans } from "@/hooks/usePlans";
 import { Plan } from "@/types/plan";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import axios from "axios";
 
 const Admin = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -30,9 +33,37 @@ const Admin = () => {
   const [deletingPlanId, setDeletingPlanId] = useState<number | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   
+  // Database connection status
+  const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [dbError, setDbError] = useState<string | null>(null);
+  const [isCheckingDb, setIsCheckingDb] = useState(false);
+  
   useEffect(() => {
     document.title = "Panel Admin - MetalScale";
+    checkDatabaseConnection();
   }, []);
+
+  const checkDatabaseConnection = async () => {
+    setIsCheckingDb(true);
+    setDbStatus('checking');
+    setDbError(null);
+    
+    try {
+      const response = await axios.get('/api/auth/check-db-connection');
+      if (response.data.connected) {
+        setDbStatus('connected');
+      } else {
+        setDbStatus('error');
+        setDbError(response.data.error || 'No se pudo conectar a la base de datos');
+      }
+    } catch (error) {
+      setDbStatus('error');
+      setDbError('Error al verificar la conexión con la base de datos');
+      console.error('Error checking database connection:', error);
+    } finally {
+      setIsCheckingDb(false);
+    }
+  };
 
   // Si no está autenticado y ya terminó de cargar, redireccionar al login
   if (!authLoading && !isAuthenticated) {
@@ -93,6 +124,7 @@ const Admin = () => {
             <TabsList className="mb-8">
               <TabsTrigger value="plans">Planes</TabsTrigger>
               <TabsTrigger value="settings">Configuración</TabsTrigger>
+              <TabsTrigger value="database">Base de Datos</TabsTrigger>
             </TabsList>
             
             <TabsContent value="plans" className="space-y-8">
@@ -139,6 +171,57 @@ const Admin = () => {
                 <p className="text-gray-600">
                   La configuración del sistema estará disponible próximamente.
                 </p>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="database">
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Estado de la Base de Datos</h2>
+                
+                <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <Database className="h-6 w-6 text-gray-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium">Conexión a MySQL</h3>
+                      <p className="text-sm text-gray-600">
+                        Estado de la conexión a la base de datos
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="font-medium">Estado:</span>
+                    {dbStatus === 'checking' ? (
+                      <span className="text-yellow-500 flex items-center">
+                        Comprobando...
+                      </span>
+                    ) : dbStatus === 'connected' ? (
+                      <span className="text-green-500 flex items-center">
+                        <Check className="h-5 w-5 mr-1" /> Conectado
+                      </span>
+                    ) : (
+                      <span className="text-red-500 flex items-center">
+                        <X className="h-5 w-5 mr-1" /> Error de conexión
+                      </span>
+                    )}
+                  </div>
+                  
+                  {dbError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertDescription>{dbError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <Button 
+                    onClick={checkDatabaseConnection} 
+                    disabled={isCheckingDb} 
+                    className="w-full"
+                  >
+                    {isCheckingDb ? 'Comprobando...' : 'Comprobar Conexión'}
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
