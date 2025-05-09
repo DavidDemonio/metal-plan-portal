@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,34 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				metal: {
+					50: '#f5f7fa',
+					100: '#ebeef3',
+					200: '#d2d9e7',
+					300: '#aab9d1',
+					400: '#7a91b5',
+					500: '#59739c',
+					600: '#455a80',
+					700: '#384968',
+					800: '#313e57',
+					900: '#2c354a',
+					950: '#1e2433'
+				},
+				zenopurple: {
+					light: '#9b87f5',
+					DEFAULT: '#7c4dff',
+					dark: '#5e35b1'
+				},
+				zenoblue: {
+					light: '#33C3F0',
+					DEFAULT: '#33a3f0',
+					dark: '#2574b8'
 				}
+			},
+			backgroundImage: {
+				'gradient-zenoscale': 'linear-gradient(to right, #9b87f5, #33a3f0)',
+				'gradient-zenoscale-vertical': 'linear-gradient(to bottom, #9b87f5, #33a3f0)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
